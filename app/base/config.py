@@ -19,8 +19,7 @@ else:
 
 
 class ConfigBase:
-    _protect_fields = [
-    ]
+    _protect_fields = []
     _config_path = CONFIG_PATH
     language = 'en'
 

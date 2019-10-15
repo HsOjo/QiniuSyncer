@@ -24,6 +24,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.load_language()
 
         self.init_languages_menu()
+        self.load_data()
 
     @property
     def lang(self):
