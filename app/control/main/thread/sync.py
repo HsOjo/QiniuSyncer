@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QThread
 
-from ..model.seven_cow import SevenCow
+from app.util.seven_cow import SevenCow
 
 
 class TSync(QThread):
@@ -8,14 +8,16 @@ class TSync(QThread):
 
     def __init__(self):
         super().__init__()
-        self.model = SevenCow()
+        self.sc = SevenCow()
+
         self.bucket = ''
         self.sync_dir = ''
 
-    def set_params(self, bucket, sync_dir):
+    def set_params(self, bucket, sync_dir, access_key, secret_key):
+        self.sc.auth(access_key, secret_key)
         self.bucket = bucket
         self.sync_dir = sync_dir
 
     def run(self):
-        self.model.use(self.bucket)
-        self.model.sync_dir(self.sync_dir, False, self.sig_progress.emit)
+        self.sc.use(self.bucket)
+        self.sc.sync_dir(self.sync_dir, False, self.sig_progress.emit)

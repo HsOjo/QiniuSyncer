@@ -2,21 +2,22 @@ from os import walk
 
 from qiniu import Auth, put_file
 
-from ..config import Config
 
-
-class SevenCow():
+class SevenCow:
     def __init__(self):
-        self.auth = Auth(Config.access_key, Config.secret_key)
-
+        self._auth = None  # type: Auth
         self.bucket = ''
 
     def use(self, bucket):
         self.bucket = bucket
 
+    def auth(self, access_key, secret_key):
+        self._auth = Auth(access_key, secret_key)
+
     def put(self, path_local, path_remote):
-        token = self.auth.upload_token(self.bucket, path_remote)
+        token = self._auth.upload_token(self.bucket, path_remote)
         ret, info = put_file(token, path_remote, path_local)
+        return ret, info
 
     def sync_dir(self, dir, top_only=False, callback=None):
         up_list = []
