@@ -1,5 +1,9 @@
+import sys
+
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
+from qiniu.config import set_default
+from qiniu.zone import Zone
 
 from app import common
 from app.config import Config
@@ -15,10 +19,13 @@ from .util import github
 class Application:
     def __init__(self, args):
         Log.append('app_init', 'Info', 'version: %s' % Const.version)
+        set_default(default_zone=Zone(home_dir=pyinstaller.get_runtime_dir()))
 
         self.qt = QApplication(args)
         self.qt.setApplicationName(Const.app_name)
         self.qt.setWindowIcon(QIcon('%s/app/res/icon.png' % pyinstaller.get_runtime_dir()))
+
+        self.hook_exception()
 
         self.config = Config()
         self.config.load()
@@ -48,8 +55,9 @@ class Application:
         init_app(events=self.events)
         return self.qt.exec_()
 
-    def callback_exception(self):
-        exc = common.get_exception()
+    def callback_exception(self, exc=None):
+        if exc is None:
+            exc = common.get_exception()
         Log.append(self.callback_exception, 'Error', exc)
 
         if QMessageBox.warning(None, self.lang.title_crash, self.lang.description_crash):
@@ -91,3 +99,15 @@ class Application:
                         release['body'], release['assets'][0]['browser_download_url']))
         except:
             Log.append(self.check_update, 'Warning', common.get_exception())
+
+    def hook_exception(self):
+        def boom(type, value, tb):
+            from io import StringIO
+            from app.util import io_helper
+            import traceback
+            with StringIO() as io:
+                traceback.print_exception(type, value, tb, file=io)
+                exc = io_helper.read_all(io)
+            self.callback_exception(exc)
+
+        sys.excepthook = boom
