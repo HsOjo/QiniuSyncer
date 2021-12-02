@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QMessageBox, QFileDialog
 from qiniu.config import set_default
 from qiniu.zone import Zone
 
@@ -53,7 +53,7 @@ class Application:
 
     def run(self):
         init_app(events=self.events)
-        return self.qt.exec_()
+        return self.qt.exec()
 
     def callback_exception(self, exc=None):
         if exc is None:

@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QAction
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMainWindow, QFileDialog
 
 from app.config import Config
 from app.res.const import Const
